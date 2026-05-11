@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "models": [
+    { "level": "product-doc",    "tier": "strong" },
+    { "level": "epic",           "tier": "strong" },
+    { "level": "user-story",     "tier": "strong" },
+    { "level": "task-high-pass", "pass": "high", "tier": "strong" },
+    { "level": "task-low-pass",  "pass": "low",  "tier": "cheap" },
+    { "level": "task-ui",        "tier": "ui" }
+  ]
+}

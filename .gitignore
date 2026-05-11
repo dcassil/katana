@@ -1,0 +1,10 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+
+# Sqlite WAL/SHM (the .db itself is committed as workspace state)
+.metis/metis.db-wal
+.metis/metis.db-shm
+.katana/*.db-wal
+.katana/*.db-shm

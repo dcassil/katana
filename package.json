@@ -1,0 +1,11 @@
+{
+  "name": "katana",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "katana-mcp": "bin/katana-mcp.js"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
+}
