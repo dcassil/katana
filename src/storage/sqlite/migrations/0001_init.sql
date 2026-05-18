@@ -1,14 +1,12 @@
 -- Katana storage schema v1.
 -- Adapted from metis (.metis/metis.db). Simplified: no document_relationships
 -- (parent stored on documents), no archive_dir mirroring, no diesel_migrations.
-
-PRAGMA foreign_keys = ON;
-PRAGMA journal_mode = WAL;
-
-CREATE TABLE schema_migrations (
-    version INTEGER PRIMARY KEY NOT NULL,
-    applied_at REAL NOT NULL DEFAULT (julianday('now'))
-);
+--
+-- Connection-level pragmas (foreign_keys, journal_mode) are set in
+-- openSqliteStorage at db-open time, not here. WAL mode cannot be set
+-- inside a transaction, and migrations run wrapped in BEGIN/COMMIT.
+--
+-- The schema_migrations table is created by the migration runner.
 
 CREATE TABLE documents (
     filepath           TEXT PRIMARY KEY NOT NULL,

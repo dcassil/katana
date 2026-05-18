@@ -42,6 +42,8 @@ export function openSqliteStorage(opts: SqliteStorageOptions): StoragePort {
   fs.mkdirSync(root, { recursive: true });
 
   const db = new Database(path.join(root, "katana.db"));
+  db.pragma("journal_mode = WAL");
+  db.pragma("foreign_keys = ON");
   const migrationsDir = path.join(path.dirname(new URL(import.meta.url).pathname), "migrations");
   applyMigrations(db, migrationsDir);
 
@@ -92,7 +94,19 @@ export function openSqliteStorage(opts: SqliteStorageOptions): StoragePort {
       ORDER BY short_code`,
   );
   const updateFrontmatterStmt = db.prepare(
-    "UPDATE documents SET frontmatter_json = ?, updated_at = julianday('now') WHERE short_code = ?",
+    `UPDATE documents
+        SET frontmatter_json = @frontmatter_json,
+            title             = @title,
+            phase             = @phase,
+            archived          = @archived,
+            exit_criteria_met = @exit_criteria_met,
+            subtype           = @subtype,
+            pass              = @pass,
+            model_tier        = @model_tier,
+            scaffold_task     = @scaffold_task,
+            parent_short_code = @parent_short_code,
+            updated_at        = julianday('now')
+      WHERE short_code = @short_code`,
   );
   const editBodyStmt = db.prepare(
     "UPDATE documents SET body = ?, file_hash = ?, updated_at = julianday('now') WHERE short_code = ?",
@@ -311,7 +325,19 @@ export function openSqliteStorage(opts: SqliteStorageOptions): StoragePort {
             updated.updated_at = new Date().toISOString();
 
             const { file_hash } = writeMarkdown(row.filepath, updated, row.body);
-            updateFrontmatterStmt.run(JSON.stringify(updated), short_code);
+            updateFrontmatterStmt.run({
+              frontmatter_json: JSON.stringify(updated),
+              title: updated.title,
+              phase: updated.phase,
+              archived: updated.archived ? 1 : 0,
+              exit_criteria_met: updated.exit_criteria_met ? 1 : 0,
+              subtype: updated.subtype ?? null,
+              pass: updated.pass ?? null,
+              model_tier: updated.model_tier ?? null,
+              scaffold_task: updated.scaffold_task ?? null,
+              parent_short_code: updated.parent ?? null,
+              short_code,
+            });
 
             return rowToDocument({
               ...row,
