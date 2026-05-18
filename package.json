@@ -6,6 +6,10 @@
     "katana-mcp": "bin/katana-mcp.js"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "vitest": "^1.6.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.10.0"
   }
 }
