@@ -1,5 +1,8 @@
 import { readFileSync, mkdirSync, rmSync, readdirSync, writeFileSync, statSync } from "fs";
-import { join } from "path";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 import {
   PlatformAdapter,
   PlatformId,

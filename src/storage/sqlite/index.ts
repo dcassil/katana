@@ -121,7 +121,13 @@ export function openSqliteStorage(opts: SqliteStorageOptions): StoragePort {
         ? "epics"
         : level === "user-story"
           ? "user-stories"
-          : `${level}s`;
+          : level === "task-high-pass"
+            ? "tasks-high-pass"
+            : level === "task-low-pass"
+              ? "tasks-low-pass"
+              : level === "task-ui"
+                ? "tasks-ui"
+                : `${level}s`;
     return path.join(
       root,
       "strategies",
