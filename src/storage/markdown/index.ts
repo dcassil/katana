@@ -22,25 +22,39 @@ export function readMarkdown(filepath: string): Document {
   const raw = fs.readFileSync(filepath, "utf8");
   const parsed = matter(raw);
   const fm = parsed.data as Frontmatter;
+  // Round-trip convention (see serialize): when the writer was given a body
+  // ending in "\n", it emits a blank line between frontmatter and body, which
+  // gray-matter parses back as a leading "\n" in content. When the writer
+  // added the normalizing "\n" itself, there is no blank line.
+  let body = parsed.content;
+  if (body.startsWith("\n")) {
+    body = body.slice(1);
+  } else {
+    body = body.replace(/\n$/, "");
+  }
   return {
     frontmatter: fm,
-    body: parsed.content.replace(/^\n/, ""),
+    body,
     filepath,
     file_hash: computeHash(raw),
   };
 }
 
-/** Serialize frontmatter in canonical order; trim and ensure trailing newline. */
+/** Serialize frontmatter in canonical order; ensure trailing newline. */
 export function serialize(fm: Frontmatter, body: string): string {
   const ordered: Record<string, unknown> = {};
   for (const k of FIELD_ORDER) {
     if (fm[k] !== undefined) ordered[k] = fm[k];
   }
-  // gray-matter.stringify emits valid YAML frontmatter.
-  const out = matter.stringify(body.endsWith("\n") ? body : body + "\n", ordered, {
-    // gray-matter passes engine options through; default js-yaml is fine.
-  });
-  return out;
+  // matter.stringify("") emits "---\n<yaml>---\n\n" (trailing blank line).
+  // We splice body in manually so the reader can detect whether the original
+  // body had a trailing newline (blank line present) or had one added for
+  // normalization (no blank line).
+  const prefix = matter.stringify("", ordered);
+  if (body.endsWith("\n")) {
+    return prefix + body;
+  }
+  return prefix.replace(/\n\n$/, "\n") + body + "\n";
 }
 
 export function writeMarkdown(filepath: string, fm: Frontmatter, body: string): { file_hash: string; bytesWritten: number } {
