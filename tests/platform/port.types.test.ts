@@ -4,7 +4,11 @@
  */
 
 import { describe, it } from "vitest";
-import { expectType } from "vitest";
+
+// vitest doesn't export `expectType`; these are compile-time-only assertions.
+// At runtime this helper is a no-op — the constraint is enforced by the
+// generic parameter when TypeScript checks the file.
+function expectType<T>(_value: T): void {}
 
 import type {
   PlatformId,

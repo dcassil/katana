@@ -18,10 +18,12 @@ export function injectMarkerBlock(existing: string | null, block: string): strin
   const endIndex = existing.indexOf(KATANA_END);
 
   if (beginIndex !== -1 && endIndex !== -1 && beginIndex < endIndex) {
-    // Replace existing block
+    // Replace existing block. The slice after the end marker already starts
+    // with the trailing newline (if any) that was in the source; don't add
+    // another one or we double up.
     const before = existing.substring(0, beginIndex);
     const after = existing.substring(endIndex + KATANA_END.length);
-    return `${before}${KATANA_BEGIN}\n${trimmedBlock}\n${KATANA_END}\n${after}`;
+    return `${before}${KATANA_BEGIN}\n${trimmedBlock}\n${KATANA_END}${after}`;
   }
 
   // No valid markers found; append to end

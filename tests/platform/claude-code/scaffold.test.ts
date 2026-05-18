@@ -38,8 +38,8 @@ describe("ClaudeCodeAdapter", () => {
       "katana-board",
       "katana-validate",
     ]);
-    expect(report.files.length).toBe(5); // plugin.json + 4 commands
-    expect(report.mcpRegistered).toBe(false);
+    expect(report.files.length).toBe(7); // plugin.json + 4 commands + .mcp.json + CLAUDE.md
+    expect(report.mcpRegistered).toBe(true);
 
     // Verify plugin.json exists and matches golden fixture
     const pluginPath = join(tempDir, ".claude", "plugins", "katana", "plugin.json");

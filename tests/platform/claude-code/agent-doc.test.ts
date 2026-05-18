@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { ClaudeCodeAdapter } from "../../../src/platform/claude-code/index";
 import { AgentDocSpec, InstallOptions } from "../../../src/platform/port";
 import * as fs from "fs";
@@ -46,7 +46,7 @@ describe("ClaudeCodeAdapter.generateAgentDoc()", () => {
     expect(content).toContain("<!-- katana:begin -->");
     expect(content).toContain("## Katana Workflow");
     expect(content).toContain("<!-- katana:end -->");
-    expect(content).toEndWith("\n");
+    expect(content.endsWith("\n")).toBe(true);
   });
 
   it("should append marker block to existing file without markers", async () => {

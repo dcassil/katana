@@ -121,6 +121,19 @@ export class ClaudeCodeAdapter implements PlatformAdapter {
       });
     }
 
+    // Write .mcp.json with the katana server entry
+    const warnings: string[] = [];
+    let mcpRegistered = true;
+    try {
+      const mcpFile = await this.writeMcpConfig(opts);
+      files.push(mcpFile);
+    } catch (err) {
+      // Malformed .mcp.json without --force: surface as a warning rather
+      // than aborting the rest of the install.
+      warnings.push(err instanceof Error ? err.message : String(err));
+      mcpRegistered = false;
+    }
+
     // Generate agent documentation (CLAUDE.md)
     const agentDocSpec: AgentDocSpec = {
       filename: "CLAUDE.md",
@@ -136,9 +149,9 @@ export class ClaudeCodeAdapter implements PlatformAdapter {
     return {
       platform: this.id,
       files,
-      mcpRegistered: false, // Handled by KAT-T-0143
+      mcpRegistered,
       commands: UNIVERSAL_COMMANDS.map((cmd) => cmd.id),
-      warnings: [],
+      warnings,
     };
   }
 

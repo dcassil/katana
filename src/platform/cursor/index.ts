@@ -5,12 +5,8 @@
 
 import { join, relative } from "path";
 import { mkdir } from "fs/promises";
-import {
-  idempotentWrite,
-  readUtf8OrNull,
-  injectMarkerBlock,
-  stripMarkerBlock,
-} from "../_shared/fs";
+import { idempotentWrite, readUtf8OrNull } from "../_shared/fs";
+import { injectMarkerBlock, stripMarkerBlock } from "../_shared/markers";
 import { mergeMcpServers, removeMcpServer } from "../_shared/json-merge";
 import { UNIVERSAL_COMMANDS } from "../_shared/universal-commands";
 import {

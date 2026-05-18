@@ -55,9 +55,13 @@ export function removeMcpServer(existingJson: string, name: string): string | nu
   if (config.mcpServers && typeof config.mcpServers === "object") {
     delete config.mcpServers[name];
 
-    // Check if mcpServers is empty
     if (Object.keys(config.mcpServers).length === 0) {
-      return null; // Signal to delete file
+      // Only signal "delete the file" when nothing else lives at the top
+      // level. Otherwise drop the empty mcpServers key but keep the rest.
+      delete config.mcpServers;
+      if (Object.keys(config).length === 0) {
+        return null;
+      }
     }
   }
 

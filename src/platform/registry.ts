@@ -12,11 +12,20 @@ export class UnknownPlatformError extends Error {
   }
 }
 
-const REGISTRY: Record<PlatformId, AdapterFactory> = {
+const DEFAULTS: Record<PlatformId, AdapterFactory> = {
   "claude-code": () => new ClaudeCodeAdapter(),
   "cursor": () => new CursorAdapter(),
   "openai-codex": () => new OpenAiCodexAdapter(),
 };
+
+const REGISTRY: Record<PlatformId, AdapterFactory> = { ...DEFAULTS };
+
+/** Restore the default factories. Used by tests to undo stub overrides. */
+export function resetRegistry(): void {
+  for (const id of Object.keys(DEFAULTS) as PlatformId[]) {
+    REGISTRY[id] = DEFAULTS[id];
+  }
+}
 
 export function getAdapter(id: PlatformId): PlatformAdapter {
   const factory = REGISTRY[id];

@@ -89,11 +89,15 @@ describe("json-merge utilities", () => {
   describe("removeMcpServer", () => {
     it("removes server from mcpServers", () => {
       const existing = JSON.stringify({
-        mcpServers: { "server-to-remove": { command: "test" } },
+        mcpServers: {
+          "server-to-remove": { command: "test" },
+          keep: { command: "keep" },
+        },
       });
       const result = removeMcpServer(existing, "server-to-remove");
       const parsed = JSON.parse(result!);
       expect(parsed.mcpServers["server-to-remove"]).toBeUndefined();
+      expect(parsed.mcpServers["keep"]).toBeDefined();
     });
 
     it("preserves other servers", () => {

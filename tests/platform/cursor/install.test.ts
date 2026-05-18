@@ -6,7 +6,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { join } from "path";
 import { mkdtemp, rm } from "fs/promises";
 import { tmpdir } from "os";
-import { readFileSync, writeFileSync, existsSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import CursorAdapter from "../../../src/platform/cursor/index";
 import { InstallOptions } from "../../../src/platform/port";
 import { UNIVERSAL_COMMANDS } from "../../../src/platform/_shared/universal-commands";
@@ -94,7 +94,7 @@ describe("CursorAdapter", () => {
         },
       };
       const cursorDir = join(tempDir, ".cursor");
-      await mkdtemp(cursorDir).catch(() => {});
+      mkdirSync(cursorDir, { recursive: true });
       writeFileSync(mcpJsonPath, JSON.stringify(existing, null, 2));
 
       const opts: InstallOptions = {

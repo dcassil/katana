@@ -3,25 +3,14 @@ import {
   getAdapter,
   listPlatforms,
   registerAdapter,
+  resetRegistry,
   UnknownPlatformError,
 } from "../../src/platform/registry";
 import type { PlatformId } from "../../src/platform/port";
 
 describe("Adapter Registry", () => {
-  const originalRegistry: Record<PlatformId, () => any> = {};
-
-  beforeEach(() => {
-    // Save original state for restoration
-    listPlatforms().forEach((id) => {
-      originalRegistry[id] = getAdapter(id);
-    });
-  });
-
   afterEach(() => {
-    // Restore original state
-    Object.entries(originalRegistry).forEach(([id, adapter]) => {
-      registerAdapter(id as PlatformId, () => adapter);
-    });
+    resetRegistry();
   });
 
   it('getAdapter("claude-code").id === "claude-code"', () => {
