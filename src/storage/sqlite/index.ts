@@ -78,7 +78,7 @@ export function openSqliteStorage(opts: SqliteStorageOptions): StoragePort {
     `SELECT d.short_code, d.document_type AS level, d.title, d.phase,
             d.parent_short_code AS parent, d.archived, datetime(d.updated_at) AS updated_at,
             bm25(document_search) AS rank,
-            snippet(document_search, 1, '<<', '>>', '...', 12) AS snippet
+            snippet(document_search, -1, '<<', '>>', '...', 12) AS snippet
        FROM document_search
        JOIN documents d ON d.filepath = document_search.document_filepath
       WHERE document_search MATCH :query
@@ -156,7 +156,7 @@ export function openSqliteStorage(opts: SqliteStorageOptions): StoragePort {
   }
 
   function sanitizeQuery(q: string): string {
-    return q.replace(/[^A-Za-z0-9_ "]/g, "").trim();
+    return q.replace(/[^A-Za-z0-9_ "]/g, " ").replace(/\s+/g, " ").trim();
   }
 
   function validatePhase(level: string, phase: string): void {
@@ -192,7 +192,7 @@ export function openSqliteStorage(opts: SqliteStorageOptions): StoragePort {
               created_at: new Date(now * 1000).toISOString(),
               updated_at: new Date(now * 1000).toISOString(),
               archived: false,
-              tags: [],
+              tags: [`#${input.level}`, `#phase/${PHASES_BY_LEVEL[input.level][0]}`],
               exit_criteria_met: false,
               phase: PHASES_BY_LEVEL[input.level][0],
               parent: input.parent,
@@ -203,7 +203,7 @@ export function openSqliteStorage(opts: SqliteStorageOptions): StoragePort {
               initiative_id: input.initiative_id,
             };
 
-            const body = input.body ?? "";
+            const body = input.body ?? `# ${input.title}\n`;
             const { file_hash, bytesWritten } = writeMarkdown(filepath, fm, body);
 
             insertStmt.run(
