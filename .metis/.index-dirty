@@ -1,2 +1,8 @@
 /Users/danielcassil/Code/katana/src/storage/sqlite/index.ts
 /Users/danielcassil/Code/katana/tests/integration/round-trip.test.ts
+/Users/danielcassil/Code/katana/tests/gates/builtin.test.ts
+/Users/danielcassil/Code/katana/tests/gates/runner.test.ts
+/Users/danielcassil/Code/katana/tests/gates/reporters.test.ts
+/Users/danielcassil/Code/katana/tests/gates/loader.test.ts
+/Users/danielcassil/Code/katana/tests/gates/helpers.ts
+/Users/danielcassil/Code/katana/src/gates/loader.ts

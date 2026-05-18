@@ -30,7 +30,9 @@ export function loadAllFailFixtures(): FailFixture[] {
     const gateMatch = /<!--\s*expected-gate:\s*(\S+)\s*-->/.exec(raw);
     const codeMatch = /<!--\s*expected-code:\s*(\S+)\s*-->/.exec(raw);
     if (!gateMatch || !codeMatch) {
-      throw new Error(`fail fixture ${f} missing expected-gate/expected-code comments`);
+      // Support fixtures (e.g. a parent referenced by another fail fixture)
+      // intentionally omit the markers — they aren't standalone test cases.
+      continue;
     }
     out.push({
       path,
@@ -42,6 +44,14 @@ export function loadAllFailFixtures(): FailFixture[] {
   return out;
 }
 
+/** Every .md under fail/, including support fixtures without marker comments. */
+function loadAllFailDocs(): KatanaDocument[] {
+  const dir = join(FIXTURES_ROOT, "fail");
+  return readdirSync(dir)
+    .filter((f) => f.endsWith(".md"))
+    .map((f) => loadDocument(join(dir, f)));
+}
+
 export function ctxFromAll(): GateContext {
-  return createContext([...loadAllPassFixtures(), ...loadAllFailFixtures().map((f) => f.doc)]);
+  return createContext([...loadAllPassFixtures(), ...loadAllFailDocs()]);
 }

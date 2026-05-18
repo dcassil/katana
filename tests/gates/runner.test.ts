@@ -1,4 +1,4 @@
-import { test } from "node:test";
+import { test } from "vitest";
 import assert from "node:assert/strict";
 import { runGates } from "../../src/gates/runner.js";
 import { createContext } from "../../src/gates/context.js";

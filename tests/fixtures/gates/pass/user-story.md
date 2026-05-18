@@ -28,9 +28,9 @@ As a gate validator, I want to test document structure and validation rules, so 
 
 ## Acceptance Criteria
 
-- Document structure validates against templates.
-- Cross-references resolve correctly.
-- Phase hierarchy is enforced.
+- [ ] Document structure validates against templates.
+- [ ] Cross-references resolve correctly.
+- [ ] Phase hierarchy is enforced.
 
 ## Interface Contract
 

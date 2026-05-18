@@ -1,4 +1,4 @@
-import { test } from "node:test";
+import { test } from "vitest";
 import assert from "node:assert/strict";
 import { runGates } from "../../src/gates/runner.js";
 import { frontmatterSchemaGate } from "../../src/gates/builtin/frontmatter-schema.js";
@@ -18,6 +18,18 @@ const ALL_GATES = [
   decompositionReadinessGate,
 ];
 const GATE_BY_NAME = new Map(ALL_GATES.map((g) => [g.name, g]));
+// Fixture comments use shorter aliases for gates.
+const GATE_ALIASES: Record<string, string> = {
+  "decomp-schema": "decomposition-readiness",
+  "exit-schema": "phase-transition-exit-criteria",
+  "parent-schema": "parent-readiness",
+  "short-code-schema": "short-code-format",
+  "template-schema": "template-completeness",
+};
+for (const [alias, name] of Object.entries(GATE_ALIASES)) {
+  const g = GATE_BY_NAME.get(name);
+  if (g) GATE_BY_NAME.set(alias, g);
+}
 
 test("every pass fixture passes every gate", () => {
   const ctx = ctxFromAll();
