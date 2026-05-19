@@ -10,6 +10,29 @@
 import Database from "better-sqlite3";
 import * as path from "node:path";
 import * as fs from "node:fs";
+import { fileURLToPath } from "node:url";
+
+/**
+ * Look up the seed body for a new document of `level` by reading the
+ * level's `_base.md` template from the katana plugin's `templates/`
+ * directory. We strip the YAML frontmatter — the storage layer writes
+ * its own — and return only the markdown body.
+ *
+ * Templates ship inside the katana repo at `<repo>/templates/<level>/_base.md`.
+ * Resolution is relative to this source file via import.meta.url so it
+ * works when the plugin is installed at ${CLAUDE_PLUGIN_ROOT}/katana too.
+ */
+function loadTemplateBody(level: string): string | null {
+  const here = path.dirname(fileURLToPath(import.meta.url));
+  // src/storage/sqlite/ -> repo root is three levels up.
+  const repoRoot = path.resolve(here, "..", "..", "..");
+  const tmplPath = path.join(repoRoot, "templates", level, "_base.md");
+  if (!fs.existsSync(tmplPath)) return null;
+  const raw = fs.readFileSync(tmplPath, "utf8");
+  // Strip leading frontmatter block: `---\n...\n---\n?`.
+  const m = /^---\r?\n[\s\S]*?\r?\n---\r?\n?([\s\S]*)$/.exec(raw);
+  return m ? m[1]!.trim() : raw.trim();
+}
 import { applyMigrations } from "./migrations/index.js";
 import { createAllocator } from "../../short-code/index.js";
 import { readMarkdown, writeMarkdown, computeHash, serialize } from "../markdown/index.js";
@@ -209,7 +232,10 @@ export function openSqliteStorage(opts: SqliteStorageOptions): StoragePort {
               initiative_id: input.initiative_id,
             };
 
-            const body = input.body ?? `# ${input.title}\n`;
+            const body =
+              input.body ??
+              loadTemplateBody(input.level) ??
+              `# ${input.title}\n`;
             const { file_hash, bytesWritten } = writeMarkdown(filepath, fm, body);
 
             insertStmt.run(
