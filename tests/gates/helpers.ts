@@ -1,10 +1,14 @@
 import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { loadDocument } from "../../src/gates/loader.js";
 import { createContext } from "../../src/gates/context.js";
 import type { KatanaDocument, GateContext } from "../../src/gates/types.js";
 
-export const FIXTURES_ROOT = "/Users/danielcassil/Code/katana/tests/fixtures/gates";
+export const FIXTURES_ROOT = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "../fixtures/gates",
+);
 
 export function loadAllPassFixtures(): KatanaDocument[] {
   const dir = join(FIXTURES_ROOT, "pass");

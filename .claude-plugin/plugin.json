@@ -21,5 +21,12 @@
     "gates",
     "claude-code",
     "cursor"
-  ]
+  ],
+  "mcpServers": {
+    "katana": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/dist/katana-mcp.mjs"],
+      "transport": "stdio"
+    }
+  }
 }
